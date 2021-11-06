@@ -6,10 +6,12 @@ import {
   TouchableOpacity,
   Platform,
   TouchableNativeFeedback,
+  FlatList,
 } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
 import { CATEGORIES } from "../data/dummy-data";
+import HeaderButton from "../components/HeaderButton";
 
 export default function Categories(props) {
   const { navigation } = props;
@@ -45,8 +47,21 @@ export default function Categories(props) {
   );
 }
 
-Categories.navigationOptions = {
-  headerTitle: "Meal Category",
+Categories.navigationOptions = (navData) => {
+  return {
+    headerTitle: "Meal Category",
+    headerLeft: () => (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="Menu"
+          iconName="ios-menu"
+          onPress={() => {
+            navData.navigation.toggleDrawer();
+          }}
+        />
+      </HeaderButtons>
+    ),
+  };
 };
 
 const styles = StyleSheet.create({
@@ -55,7 +70,11 @@ const styles = StyleSheet.create({
     margin: 15,
     height: 150,
     borderRadius: 10,
-    overflow: "hidden",
+    overflow:
+      Platform.OS === "android" && Platform.Version >= 21
+        ? "hidden"
+        : "visible",
+    elevation: 3,
   },
   // eslint-disable-next-line react-native/no-color-literals
   container: {
@@ -65,7 +84,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.26,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 10,
-    elevation: 3,
     padding: 15,
     justifyContent: "flex-end",
     alignItems: "flex-end",

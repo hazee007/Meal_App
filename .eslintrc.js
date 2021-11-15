@@ -14,7 +14,7 @@ module.exports = {
     ecmaVersion: 13,
     sourceType: "module",
   },
-  plugins: ["react", "react-native"],
+  plugins: ["react", "react-native", "react-hooks"],
   rules: {
     "react/prop-types": "off",
     "react/display-name": "off",
@@ -33,5 +33,7 @@ module.exports = {
     // Removed rule "disallow unused variables" from recommended eslint rules
     "no-unused-vars": 2,
     "no-undef": ["error"],
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
   },
 };

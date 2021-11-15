@@ -1,14 +1,32 @@
-import React from "react";
+import React, { useEffect, useCallback } from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import { useSelector, useDispatch } from "react-redux";
 
 import HeaderButton from "../components/HeaderButton";
-import { MEALS } from "../data/dummy-data";
 import DefaultText from "../components/DefaultText";
+import { toggleFavorite } from "../store/actions/meals";
 
 export default function MealDetails({ navigation }) {
+  const dispatch = useDispatch();
+  const availableMeals = useSelector((state) => state.meals.meals);
   const mealId = navigation.getParam("mealId");
-  const meal = MEALS.find((m) => m.id === mealId);
+  const meal = availableMeals.find((m) => m.id === mealId);
+  const isFavorite = useSelector((state) =>
+    state.meals.favoriteMeals.some((meals) => meals.id === mealId)
+  );
+
+  const toggleFavoriteHandler = useCallback(() => {
+    dispatch(toggleFavorite(mealId));
+  }, [dispatch, mealId]);
+
+  useEffect(() => {
+    navigation.setParams({ toggleFav: toggleFavoriteHandler });
+  }, [toggleFavoriteHandler]);
+
+  useEffect(() => {
+    navigation.setParams({ isFavorite: isFavorite });
+  }, [isFavorite]);
 
   return (
     <ScrollView>
@@ -35,13 +53,18 @@ export default function MealDetails({ navigation }) {
 }
 
 MealDetails.navigationOptions = (navigationData) => {
-  const mealId = navigationData.navigation.getParam("mealId");
-  const meal = MEALS.find((m) => m.id === mealId);
+  const mealTitle = navigationData.navigation.getParam("mealTitle");
+  const toggleFavorite = navigationData.navigation.getParam("toggleFav");
+  const isFav = navigationData.navigation.getParam("isFavorite");
   return {
-    headerTitle: meal.title,
+    headerTitle: mealTitle,
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
-        <Item title="Favorite" iconName="ios-star" onPress={() => {}} />
+        <Item
+          title="Favorite"
+          iconName={isFav ? "ios-star" : "ios-star-outline"}
+          onPress={toggleFavorite}
+        />
       </HeaderButtons>
     ),
   };

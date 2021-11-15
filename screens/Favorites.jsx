@@ -1,16 +1,21 @@
 import React from "react";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import { useSelector } from "react-redux";
+import { Text, View, StyleSheet } from "react-native";
 
 import MealList from "../components/MealList";
-import { MEALS } from "../data/dummy-data";
 import HeaderButton from "../components/HeaderButton";
+import DefaultText from "../components/DefaultText";
 
 export default function Favorites({ navigation }) {
-  const displayedMeals = MEALS.filter(
-    (meal) => meal.id === "m1" || meal.id === "m2"
-  );
-
-  return <MealList displayedMeals={displayedMeals} navigation={navigation} />;
+  const favoriteMeals = useSelector((state) => state.meals.favoriteMeals);
+  if (favoriteMeals.length === 0)
+    return (
+      <View style={styles.empty}>
+        <DefaultText>No favorite meals found. Start adding some...</DefaultText>
+      </View>
+    );
+  return <MealList displayedMeals={favoriteMeals} navigation={navigation} />;
 }
 
 Favorites.navigationOptions = (navData) => {
@@ -29,3 +34,11 @@ Favorites.navigationOptions = (navData) => {
     ),
   };
 };
+
+const styles = StyleSheet.create({
+  empty: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
